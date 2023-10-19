@@ -1,10 +1,10 @@
 import express from 'express';
-const express = require('express');
-const router = express.Router();
-const jwt = require('jsonwebtoken');
-const bcrypt = require('bcrypt');
 
-const User = require('../models/User');
+const router = express.Router();
+import jwt from 'jsonwebtoken';
+import bcrypt from 'bcrypt';
+
+import User from '../models/User.js';
 
 router.post('/register', async (req,res) => {
     try {
@@ -52,4 +52,4 @@ router.post('/login', async (res, req) => {
     }
 });
 
-module.exports = router;
+export default router;

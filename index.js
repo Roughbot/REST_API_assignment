@@ -7,9 +7,9 @@ const PORT = 4444;
 app.use(bodyParser.json());
 
 
-const authRoutes = require('./routes/authUser');
-const buyerRoutes = require('./routes/buyers');
-const sellerRoutes = require('./routes/sellers');
+import authRoutes from './routes/authUser.js';
+import buyerRoutes from './routes/buyers.js';
+import sellerRoutes from './routes/sellers.js'; 
 
 app.get('/', (req, res) => {
     res.send('Hi there');
