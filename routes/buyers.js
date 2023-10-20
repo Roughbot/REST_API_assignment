@@ -2,25 +2,9 @@ import express from 'express';
 const router = express.Router();
 import jwt from 'jsonwebtoken';
 import Catalog from '../models/Catalog.js';
-import Product from '../models/Product.js';
-import Oeder from '../models/Order.js';
+import Order from '../models/Order.js';
 import User from '../models/User.js';
-
-function tokenAuthenticate(req, res, next){
-    const token = req.header('Authorization');
-    if (!token) {
-        return res.status(401).json({error:'Access Denied'});
-    }
-
-    jwt.verify(token, 'secret', (err, user) => {
-        if (err) {
-            return res.status(403).json({error:'Invalid Token'});
-        }else{
-            req.user = user;
-            next();
-        }
-    });
-}
+import tokenAuthenticate from './tokenAuthentication.js';
 
 router.get('/list-of-sellers', tokenAuthenticate, async (req, res) => {
     try {
@@ -35,24 +19,44 @@ router.get('/list-of-sellers', tokenAuthenticate, async (req, res) => {
 
 router.get('/seller-catalog/:seller_id', tokenAuthenticate, async (req, res) => {
     try {
-        const {id} = req.params.seller_id;
-        const catalog = await Catalog.findById(id).populate('products', 'name price');
-        if(!catalog){
-            return res.status(404).json({error:'Seller Catalog not found'});
+        const { seller_id } = req.params;
+        const catalog = await Catalog.findOne({ seller: seller_id }).populate('products', 'name price');
+
+        if (!catalog) {
+            return res.status(404).json({ error: 'Seller Catalog not found' });
         }
+
         res.json(catalog.products);
-    }catch(error){
+    } catch (error) {
         console.error(error);
-        res.status(500).json({error:'Internal Server Error'});
+        res.status(500).json({ error: 'Internal Server Error' });
     }
 });
-
 
 router.post('/create-order/:seller_id', tokenAuthenticate, async (req, res) => {
     try {
         const { seller_id } = req.params;
         const { items } = req.body;
-        const { userId } = req.user;
+        const userId  = req.user.userid;
+        // validating the seller id
+        const isValidSeller = await User.exists({ _id: seller_id, type: 'seller' });
+
+        if (!isValidSeller) {
+            return res.status(400).json({ error: 'Invalid seller check again' });
+        }
+        //creating order
+        const products = [];
+        for (const item of items) {
+            products.push(item.name);
+        }
+        //saving the order in the database
+        const order = new Order({
+            seller: seller_id,
+            buyer: userId,
+            products: products,
+        });
+        await order.save();
+        res.status(201).json({ message: 'Order created successfully', order });
     }catch(error){
         console.error(error);
         res.status(500).json({error:"Internal Server Error"});

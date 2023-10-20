@@ -1,5 +1,6 @@
 {
     "env":{
-        "MONGO_PASSWORD":"adminAdmin"
+        "MONGO_PASSWORD":"adminAdmin",
+        "JWT_SECRET":"secret"
     }
 }

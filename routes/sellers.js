@@ -1,27 +1,10 @@
 import express from 'express';
 const router = express.Router();
 import mongoose from 'mongoose';
-import jwt from 'jsonwebtoken';
 import Catalog from '../models/Catalog.js';
 import Product from '../models/Product.js';
-import Oeder from '../models/Order.js';
-import User from '../models/User.js';
-
-function tokenAuthenticate(req, res, next) {
-    const token = req.header('Authorization');
-    if (!token) {
-        return res.status(401).json({ error: 'Access Denied' });
-    }
-    jwt.verify(token, 'secret', (err, user) => {
-        if (err) {
-            return res.status(403).json({ error: 'Invalid Token' });
-        } else {
-            
-            req.user = user;
-            next();
-        }
-    });
-}
+import Order from '../models/Order.js';
+import tokenAuthenticate from './tokenAuthentication.js';
 
 router.post('/create-catalog', tokenAuthenticate, async (req, res) => {
     const { products } = req.body; // array of product objects
@@ -89,7 +72,25 @@ router.post('/create-catalog', tokenAuthenticate, async (req, res) => {
 
 
 
-router.get('/orders',);
+router.get('/orders', tokenAuthenticate, async (req,res) => {
+    try{
+        const userId = req.user.userid;
+
+        const orders = await Order.find({seller: userId});
+
+        const availableOrders = orders.map(order => {
+            const buyerId = order.buyer;
+            const products = order.products.map(product => product); 
+            return {  buyerId, products};
+        });
+
+        res.json({availableOrders});
+
+    }catch(error){
+        console.error(error);
+        res.status(500).json({message:"Internal Server Error"});
+    }
+});
 
 export default router;
 
