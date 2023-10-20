@@ -20,7 +20,7 @@ router.post('/create-catalog', tokenAuthenticate, async (req, res) => {
 
         if (existingCatalog) {
             // If a catalog exists, update the products in the existing catalog
-            existingCatalog.products = [];
+            const productIds = [];
 
             for (const product of products) {
                 const newProduct = new Product({
@@ -29,9 +29,11 @@ router.post('/create-catalog', tokenAuthenticate, async (req, res) => {
                     price: product.price,
                 });
                 await newProduct.save();
-                existingCatalog.products.push(newProduct._id);
+                productIds.push(newProduct._id);
+                
             }
-
+            existingCatalog.products = existingCatalog.products.concat(productIds);
+            
             // Save the updated catalog
             await existingCatalog.save();
 
