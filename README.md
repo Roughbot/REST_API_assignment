@@ -150,6 +150,10 @@ The responce for this request is of the format.
 
 #### Send a list of items to create a catalog for a seller:
 
+```
+ POST /api/seller/create-catalog
+```
+
 As usual this method also requires the AuthToker.The seller_user may use the following format in the body to create an unique Catalog.
 
 ```
