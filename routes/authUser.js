@@ -1,5 +1,4 @@
 import express from 'express';
-
 const router = express.Router();
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
@@ -45,7 +44,7 @@ router.post('/login', async (req, res) => {
             return res.status(401).json({error: 'Invalid Username of Password'});
         }
 
-        const token = jwt.sign({userid: user._id, userType: user.type},'secret');
+        const token = jwt.sign({userid: user._id, userType: user.type}, process.env.JWT_SECRET );
         const ID = user._id;
         res.json({ID,token});
 

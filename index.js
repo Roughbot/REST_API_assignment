@@ -6,6 +6,7 @@ import authRoutes from './routes/authUser.js';
 import buyerRoutes from './routes/buyers.js';
 import sellerRoutes from './routes/sellers.js'; 
 
+
 const app = express();
 const PORT = 4444;
 app.use(bodyParser.json());
