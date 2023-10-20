@@ -20,8 +20,9 @@ router.post('/register', async (req,res) => {
         const newUser = new User({username, password: hashedPassword, type});
         await newUser.save();
 
-        const token = jwt.sign({userId: newUser._id, userType: newUser.type}, 'Auth_Token');
-        res.json({token});
+        // const token = jwt.sign({userId: newUser._id, userType: newUser.type}, 'secret');
+        // res.json({token});
+        res.json({username,type,message:"Refistered Success"});
 
     }catch(error){
         console.error(error);
@@ -30,7 +31,7 @@ router.post('/register', async (req,res) => {
 });
 
 
-router.post('/login', async (res, req) => {
+router.post('/login', async (req, res) => {
     try{
         const { username, password } = req.body;
 
@@ -44,7 +45,9 @@ router.post('/login', async (res, req) => {
             return res.status(401).json({error: 'Invalid Username of Password'});
         }
 
-        const token = jwt.sign({userid: user._id, userType: user.type},'Auth_token');
+        const token = jwt.sign({userid: user._id, userType: user.type},'secret');
+        const ID = user._id;
+        res.json({ID,token});
 
     }catch(error){
         console.error(error);
