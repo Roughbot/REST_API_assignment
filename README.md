@@ -111,6 +111,10 @@ The result may look like this.
 ```
 #### Send a list of items to create an order for seller with "seller_id":
 
+```
+    POST /api/byuer/create-order/:seller_id
+```
+
 This API requires a seller_id and a AuthToken for a successful request.
 
 The data format in the body for the request look like this.
