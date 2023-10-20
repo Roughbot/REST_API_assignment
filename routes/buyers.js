@@ -35,8 +35,8 @@ router.get('/list-of-sellers', tokenAuthenticate, async (req, res) => {
 
 router.get('/seller-catalog/:seller_id', tokenAuthenticate, async (req, res) => {
     try {
-        const {seller_id } = req.params;
-        const catalog = await Catalog.findOne({seller: seller_id}).populate('products', 'name price');
+        const {id} = req.params.seller_id;
+        const catalog = await Catalog.findById(id).populate('products', 'name price');
         if(!catalog){
             return res.status(404).json({error:'Seller Catalog not found'});
         }
@@ -48,6 +48,15 @@ router.get('/seller-catalog/:seller_id', tokenAuthenticate, async (req, res) => 
 });
 
 
-router.post('/create-order/:seller_id',);
+router.post('/create-order/:seller_id', tokenAuthenticate, async (req, res) => {
+    try {
+        const { seller_id } = req.params;
+        const { items } = req.body;
+        const { userId } = req.user;
+    }catch(error){
+        console.error(error);
+        res.status(500).json({error:"Internal Server Error"});
+    }
+});
 
 export default router;
